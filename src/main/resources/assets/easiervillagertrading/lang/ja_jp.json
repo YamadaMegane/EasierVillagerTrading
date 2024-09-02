@@ -1,0 +1,4 @@
+{
+    "easiervillagertrading.config.swapshift": "「全て取引」をデフォルトにする",
+    "easiervillagertrading.config.tt.swapshift": "falseの場合、SHIFT+クリックで全て取引します。\ntrueの場合、ただのクリックで全て取引し、SHIFT+クリックで1回の取引を行います。"
+}
