@@ -15,6 +15,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 
+import java.lang.reflect.Method;
+
 /**
  * @author gbl
  */
@@ -42,13 +44,15 @@ public class BetterGuiMerchant extends MerchantScreen implements AutoTrade {
         MerchantOffers trades = menu.getOffers();
         MerchantOffer recipe = trades.get(tradeIndex);
         int safeguard = 0;
+        int safelimit = ConfigData.tradeLimit - 1;
+        
         while (!recipe.isOutOfStock()
                 // TODO how do we check this now? &&  client.player.getInventory().getCursorStack().isEmpty()
                 && inputSlotsAreEmpty()
                 && hasEnoughItemsInInventory(recipe)
                 && canReceiveOutput(recipe.getResult())) {
             transact(recipe);
-            if (hasShiftDown() == ConfigData.shiftSwapped || ++safeguard > 50) {
+            if (hasShiftDown() == ConfigData.shiftSwapped || ++safeguard > safelimit) {
                 break;
             }
         }
@@ -164,11 +168,36 @@ public class BetterGuiMerchant extends MerchantScreen implements AutoTrade {
     private boolean areItemStacksMergable(ItemStack a, ItemStack b) {
         if (a == null || b == null)
             return false;
+        
         if (a.getItem() == b.getItem()
                 && (!a.isDamageableItem() || a.getDamageValue() == b.getDamageValue())
-                && ItemStack.isSameItemSameTags(a, b))
+                && tagMatches(a, b))
             return true;
         return false;
+    }
+
+    private boolean tagMatches(ItemStack a, ItemStack b) {
+        boolean tagMatches = false;
+
+        try {
+            // Try to use isSameItemSameTags (prior to 1.20.6, obfuscated name is m_150942_)
+            Method isSameItemSameTags = ItemStack.class.getMethod("m_150942_", ItemStack.class, ItemStack.class);
+            tagMatches = (boolean) isSameItemSameTags.invoke(null, a, b);
+        } catch (NoSuchMethodException e1) {
+            try {
+                // Try to use isSameItemSameComponents (1.20.6 and later)
+                Method isSameItemSameComponents = ItemStack.class.getMethod("isSameItemSameComponents", ItemStack.class, ItemStack.class);
+                tagMatches = (boolean) isSameItemSameComponents.invoke(null, a, b);
+            } catch (NoSuchMethodException e2) {
+                throw new RuntimeException("Neither isSameItemSameTags nor isSameItemSameComponents method found.");
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+
+        return tagMatches;
     }
 
     private void getslot(int slot, ItemStack stack, int... forbidden) {

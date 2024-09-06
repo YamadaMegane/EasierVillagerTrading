@@ -1,0 +1,19 @@
+ext {
+  minecraft_version = '1.21'
+  minecraft_version_range = '[1.21,1.22)'
+  forge_version = '51.0.33'
+  forge_version_range = '[51,)'
+  loader_version_range = '[51,)'
+  mapping_version = '1.21'
+  reobf_setting = false
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+dependencies {
+  implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
+  
+  implementation "curse.maven:collective-342584:5631819"
+  implementation "curse.maven:infinite-trading-348964:5609612"
+}
+

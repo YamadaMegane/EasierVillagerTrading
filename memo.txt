@@ -1,0 +1,23 @@
+1.18 > 1.20
+・ScreenOpenEvent > ScreenEvent
+・ScreenOpenEvent > ScreenEvent.Opening
+・event.setScreen > event.setNewScreen
+・ItemStack.tagMatches > ItemStack.isSameItemSameTags
+
+1.20.4 > 1.20.6
+・ItemStack.isSameItemSameTags > ItemStack.isSameItemSameComponents
+
+
+
+コードが同じでもメジャーバージョンが変わると動かない
+1.20、1.20.1、1.20.2、1.20.4
+1.20.6
+1.21、
+
+
+0.1.1
+・1.20～1.20.4までを共通化
+・1.20.6以降で難読化処理(reobf)がされなくなったのに対応
+
+- Increased the trade limit from 51 to 64 items.
+- Addressed compatibility issues related to the deobfuscation changes.
